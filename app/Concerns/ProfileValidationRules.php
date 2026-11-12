@@ -2,7 +2,7 @@
 
 namespace App\Concerns;
 
-use App\Models\User;
+use App\Models\Pengguna;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
@@ -17,19 +17,38 @@ trait ProfileValidationRules
     protected function profileRules(?int $userId = null): array
     {
         return [
-            'name' => $this->nameRules(),
+            'nama_lengkap' => $this->namaLengkapRules(),
+            'nomor_induk' => $this->nomorIndukRules($userId),
             'email' => $this->emailRules($userId),
+            'no_telepon' => $this->noTeleponRules(),
         ];
     }
 
     /**
-     * Get the validation rules used to validate user names.
+     * Get the validation rules used to validate user full names.
      *
      * @return array<int, Unique|ValidationRule|array<mixed>|string>
      */
-    protected function nameRules(): array
+    protected function namaLengkapRules(): array
     {
-        return ['required', 'string', 'max:255'];
+        return ['required', 'string', 'max:100'];
+    }
+
+    /**
+     * Get the validation rules used to validate student/employee ID numbers.
+     *
+     * @return array<int, Unique|ValidationRule|array<mixed>|string>
+     */
+    protected function nomorIndukRules(?int $userId = null): array
+    {
+        return [
+            'nullable',
+            'string',
+            'max:30',
+            $userId === null
+                ? Rule::unique(Pengguna::class, 'nomor_induk')
+                : Rule::unique(Pengguna::class, 'nomor_induk')->ignore($userId),
+        ];
     }
 
     /**
@@ -43,10 +62,20 @@ trait ProfileValidationRules
             'required',
             'string',
             'email',
-            'max:255',
+            'max:100',
             $userId === null
-                ? Rule::unique(User::class)
-                : Rule::unique(User::class)->ignore($userId),
+                ? Rule::unique(Pengguna::class, 'email')
+                : Rule::unique(Pengguna::class, 'email')->ignore($userId),
         ];
+    }
+
+    /**
+     * Get the validation rules used to validate user phone numbers.
+     *
+     * @return array<int, Unique|ValidationRule|array<mixed>|string>
+     */
+    protected function noTeleponRules(): array
+    {
+        return ['nullable', 'string', 'max:20'];
     }
 }
