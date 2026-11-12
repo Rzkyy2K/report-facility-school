@@ -22,7 +22,7 @@ return new class extends Migration
                 'guru',
                 'sarana',
                 'kepala_sekolah',
-                'teknisi'
+                'teknisi',
             ]);
             $table->string('no_telepon', 20)->nullable();
             $table->timestamp('created_at')->useCurrent()->nullable();
