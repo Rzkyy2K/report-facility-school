@@ -1,5 +1,4 @@
 import { Form, Head, usePage } from '@inertiajs/react';
-import { Link } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
@@ -9,21 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/profile';
 import type { Auth } from '@/types';
-import { send } from '@/routes/verification';
 
 type PageProps = {
     auth: Auth;
 };
 
-export default function Profile(
-    {
-        mustVerifyEmail,
-        status,
-    }: {
-        mustVerifyEmail: boolean;
-        status?: string;
-    },
-) {
+export default function Profile() {
     const { auth } = usePage<PageProps>().props;
 
     return (
@@ -36,7 +26,7 @@ export default function Profile(
                 <Heading
                     variant="small"
                     title="Profile"
-                    description="Update your name and email address"
+                    description="Update your profile information and email address"
                 />
 
                 <Form
@@ -49,21 +39,42 @@ export default function Profile(
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="nama_lengkap">
+                                    Nama Lengkap
+                                </Label>
 
                                 <Input
-                                    id="name"
+                                    id="nama_lengkap"
                                     className="mt-1 block w-full"
-                                    defaultValue={auth.user.name}
-                                    name="name"
+                                    defaultValue={auth.user.nama_lengkap}
+                                    name="nama_lengkap"
                                     required
                                     autoComplete="name"
-                                    placeholder="Full name"
+                                    placeholder="Nama lengkap"
                                 />
 
                                 <InputError
                                     className="mt-2"
-                                    message={errors.name}
+                                    message={errors.nama_lengkap}
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="nomor_induk">
+                                    NIS / NIP (Opsional)
+                                </Label>
+
+                                <Input
+                                    id="nomor_induk"
+                                    className="mt-1 block w-full"
+                                    defaultValue={auth.user.nomor_induk ?? ''}
+                                    name="nomor_induk"
+                                    placeholder="Nomor induk"
+                                />
+
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.nomor_induk}
                                 />
                             </div>
 
@@ -87,30 +98,25 @@ export default function Profile(
                                 />
                             </div>
 
-                            {mustVerifyEmail &&
-                                auth.user.email_verified_at === null && (
-                                    <div>
-                                        <p className="-mt-4 text-sm text-muted-foreground">
-                                            Your email address is unverified.{' '}
-                                            <Link
-                                                href={send()}
-                                                as="button"
-                                                className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                            >
-                                                Click here to re-send the
-                                                verification email.
-                                            </Link>
-                                        </p>
+                            <div className="grid gap-2">
+                                <Label htmlFor="no_telepon">
+                                    No. Telepon (Opsional)
+                                </Label>
 
-                                        {status ===
-                                            'verification-link-sent' && (
-                                            <div className="mt-2 text-sm font-medium text-green-600">
-                                                A new verification link has been
-                                                sent to your email address.
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                <Input
+                                    id="no_telepon"
+                                    className="mt-1 block w-full"
+                                    defaultValue={auth.user.no_telepon ?? ''}
+                                    name="no_telepon"
+                                    autoComplete="tel"
+                                    placeholder="08xxxxxxxxxx"
+                                />
+
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.no_telepon}
+                                />
+                            </div>
 
                             <div className="flex items-center gap-4">
                                 <Button
